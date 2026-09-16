@@ -1,6 +1,6 @@
 <?php
 
-namespace Alaanfzf\MultitenatBundle\Service;
+namespace Alanfzf\MultitenatBundle\Service;
 
 use Alanfzf\MultitenatBundle\Doctrine\ORM\TenantEntityManager;
 use Alanfzf\MultitenatBundle\Dto\ConnectionParameters;
@@ -57,11 +57,14 @@ class MultiTenantService
 
     private function getDependencyFactory(ConnectionParameters $newConnection): DependencyFactory
     {
+        // switch the connection to the new tenant database
         $this->eventDispatcher->dispatch(new DatabaseSwitchEvent($newConnection));
 
+        // generate config for migrations
+        $migration = $this->params->get('tenant_doctrine_migration');
         $config = new ConfigurationArray([
             'migrations_paths' => [
-                'DoctrineMigrations\Tenant' => $this->params->get('kernel.project_dir') . '/migrations/Tenant',
+                $migration['namespace'] => $migration['path'],
             ],
         ]);
 

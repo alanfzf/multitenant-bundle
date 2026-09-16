@@ -105,7 +105,14 @@ class AlanfzfMultiTenantBundle extends AbstractBundle
             ],
         ]);
 
+        // migrations
+        $container->parameters()
+            ->set('tenant_doctrine_migration', [
+                'namespace' => $config['tenant_migration']['tenant_migration_namespace'],
+                'path' => $config['tenant_migration']['tenant_migration_path'],
+            ]);
 
+        // entity manager
         $container->services()
         ->set('tenant_entity_manager', TenantEntityManager::class)
         ->args([
