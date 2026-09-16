@@ -1,0 +1,7 @@
+/.direnv
+/node_modules
+/vendor
+
+# PHP CS Fixer configuration
+/.php-cs-fixer.cache
+/.php-cs-fixer.php

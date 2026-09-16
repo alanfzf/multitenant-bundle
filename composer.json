@@ -1,0 +1,24 @@
+{
+    "name": "alanfzf/multitenat-bundle",
+    "type": "symfony-bundle",
+    "autoload": {
+        "psr-4": {
+            "Alanfzf\\MultitenatBundle\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "alanfzf",
+            "email": "29936954+alanfzf@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "doctrine/dbal": "^4.4",
+        "doctrine/orm": "^3.7",
+        "doctrine/doctrine-bundle": "^3.3",
+        "doctrine/doctrine-migrations-bundle": "^4.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.95"
+    }
+}
