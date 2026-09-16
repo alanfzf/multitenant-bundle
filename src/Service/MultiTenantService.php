@@ -1,10 +1,10 @@
 <?php
 
-namespace Alanfzf\MultitenatBundle\Service;
+namespace Alanfzf\MultiTenantBundle\Service;
 
-use Alanfzf\MultitenatBundle\Doctrine\ORM\TenantEntityManager;
-use Alanfzf\MultitenatBundle\Dto\ConnectionParameters;
-use Alanfzf\MultitenatBundle\Event\DatabaseSwitchEvent;
+use Alanfzf\MultiTenantBundle\Doctrine\ORM\TenantEntityManager;
+use Alanfzf\MultiTenantBundle\Dto\ConnectionParameters;
+use Alanfzf\MultiTenantBundle\Event\DatabaseSwitchEvent;
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
 use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
 use Doctrine\Migrations\DependencyFactory;

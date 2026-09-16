@@ -1,18 +1,17 @@
 <?php
 
-namespace Alanfzf\MultitenatBundle\EventListener;
+namespace Alanfzf\MultiTenantBundle\EventListener;
 
-use Alanfzf\MultitenatBundle\Doctrine\DBAL\TenantConnection;
-use Alanfzf\MultitenatBundle\Doctrine\ORM\TenantEntityManager;
-use Alanfzf\MultitenatBundle\Event\DatabaseSwitchEvent;
+use Alanfzf\MultiTenantBundle\Doctrine\DBAL\TenantConnection;
+use Alanfzf\MultiTenantBundle\Doctrine\ORM\TenantEntityManager;
+use Alanfzf\MultiTenantBundle\Event\DatabaseSwitchEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 class DatabaseSwitchEventListener
 {
     public function __construct(
         private readonly TenantEntityManager $tenantEntityManager,
-    ) {
-    }
+    ) {}
 
     #[AsEventListener()]
     public function onDatabaseSwitchEvent(DatabaseSwitchEvent $event): void

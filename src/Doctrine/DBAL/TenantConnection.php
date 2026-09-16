@@ -1,6 +1,6 @@
 <?php
 
-namespace Alanfzf\MultitenatBundle\Doctrine\DBAL;
+namespace Alanfzf\MultiTenantBundle\Doctrine\DBAL;
 
 use Doctrine\DBAL\Connection;
 

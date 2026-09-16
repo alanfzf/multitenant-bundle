@@ -1,9 +1,9 @@
 <?php
 
-namespace Alanfzf\MultitenatBundle;
+namespace Alanfzf\MultiTenantBundle;
 
-use Alanfzf\MultitenatBundle\Doctrine\DBAL\TenantConnection;
-use Alanfzf\MultitenatBundle\Doctrine\ORM\TenantEntityManager;
+use Alanfzf\MultiTenantBundle\Doctrine\DBAL\TenantConnection;
+use Alanfzf\MultiTenantBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -17,7 +17,6 @@ class AlanfzfMultiTenantBundle extends AbstractBundle
     {
         $definition->rootNode()
         ->children()
-
             // tenant connection configuration
             ->arrayNode('tenant_connection')
                 ->addDefaultsIfNotSet()
@@ -39,7 +38,6 @@ class AlanfzfMultiTenantBundle extends AbstractBundle
                    ->end()
                ->end()
            ->end()
-
             // tenant entity manager configuration
            ->arrayNode('tenant_entity_manager')
                ->addDefaultsIfNotSet()

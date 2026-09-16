@@ -1,6 +1,6 @@
 <?php
 
-namespace Alanfzf\MultitenatBundle\Doctrine\ORM;
+namespace Alanfzf\MultiTenantBundle\Doctrine\ORM;
 
 use Doctrine\ORM\Decorator\EntityManagerDecorator;
 use Doctrine\ORM\EntityManagerInterface;

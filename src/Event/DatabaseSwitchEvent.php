@@ -1,8 +1,8 @@
 <?php
 
-namespace Alanfzf\MultitenatBundle\Event;
+namespace Alanfzf\MultiTenantBundle\Event;
 
-use Alanfzf\MultitenatBundle\Dto\ConnectionParameters;
+use Alanfzf\MultiTenantBundle\Dto\ConnectionParameters;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class DatabaseSwitchEvent extends Event

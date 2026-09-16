@@ -1,6 +1,6 @@
 <?php
 
-namespace Alanfzf\MultitenatBundle\Dto;
+namespace Alanfzf\MultiTenantBundle\Dto;
 
 final class ConnectionParameters
 {
@@ -10,8 +10,7 @@ final class ConnectionParameters
         public readonly string $password,
         public readonly string $host,
         public readonly string $port,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
