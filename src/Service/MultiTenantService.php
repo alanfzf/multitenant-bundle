@@ -2,7 +2,6 @@
 
 namespace Alanfzf\MultiTenantBundle\Service;
 
-use Alanfzf\MultiTenantBundle\Doctrine\ORM\TenantEntityManager;
 use Alanfzf\MultiTenantBundle\Dto\ConnectionParameters;
 use Alanfzf\MultiTenantBundle\Event\DatabaseSwitchEvent;
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
@@ -10,6 +9,7 @@ use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Tools\Console\Command\DiffCommand;
 use Doctrine\Migrations\Tools\Console\Command\MigrateCommand;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +21,7 @@ class MultiTenantService
     public function __construct(
         private readonly ParameterBagInterface $params,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly TenantEntityManager $tenantEntityManager,
+        private readonly ManagerRegistry $registry,
     ) {}
 
     public function generateDiff(
@@ -68,7 +68,7 @@ class MultiTenantService
             ],
         ]);
 
-        $em = $this->tenantEntityManager;
+        $em = $this->registry->getManager('tenant');
 
         return DependencyFactory::fromEntityManager(
             $config,
