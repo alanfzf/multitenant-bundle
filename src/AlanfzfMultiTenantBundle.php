@@ -4,6 +4,7 @@ namespace Alanfzf\MultiTenantBundle;
 
 use Alanfzf\MultiTenantBundle\Doctrine\DBAL\TenantConnection;
 use Alanfzf\MultiTenantBundle\Doctrine\ORM\TenantEntityManager;
+use Alanfzf\MultiTenantBundle\Service\MultiTenantService;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -54,13 +55,21 @@ class AlanfzfMultiTenantBundle extends AbstractBundle
                 'path' => $config['tenant_migration']['tenant_migration_path'],
             ]);
 
-        $container->services()
+        $services = $container->services();
+
+        $services
             ->set('tenant_entity_manager', TenantEntityManager::class)
             ->public()
             ->args([service('doctrine.orm.tenant_entity_manager')]);
 
-        $container->services()
+        $services
             ->alias(TenantEntityManager::class, 'tenant_entity_manager');
+
+        $services
+            ->set(MultiTenantService::class)
+            ->autowire()
+            ->autoconfigure()
+            ->public();
     }
 
 
