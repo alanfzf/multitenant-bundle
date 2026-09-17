@@ -4,6 +4,7 @@ namespace Alanfzf\MultiTenantBundle;
 
 use Alanfzf\MultiTenantBundle\Doctrine\DBAL\TenantConnection;
 use Alanfzf\MultiTenantBundle\Doctrine\ORM\TenantEntityManager;
+use Alanfzf\MultiTenantBundle\EventListener\DatabaseSwitchEventListener;
 use Alanfzf\MultiTenantBundle\Service\MultiTenantService;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -70,6 +71,11 @@ class AlanfzfMultiTenantBundle extends AbstractBundle
             ->autowire()
             ->autoconfigure()
             ->public();
+
+        $services
+            ->set(DatabaseSwitchEventListener::class)
+            ->autowire()
+            ->autoconfigure();
     }
 
 

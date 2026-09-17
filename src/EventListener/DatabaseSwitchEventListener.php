@@ -13,7 +13,7 @@ class DatabaseSwitchEventListener
         private readonly ManagerRegistry $registry,
     ) {}
 
-    #[AsEventListener()]
+    #[AsEventListener(event: DatabaseSwitchEvent::class)]
     public function onDatabaseSwitchEvent(DatabaseSwitchEvent $event): void
     {
         $newConnParams = $event->getConnectionParameters();
