@@ -7,6 +7,7 @@ use Alanfzf\MultiTenantBundle\Doctrine\ORM\TenantEntityManager;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -22,7 +23,7 @@ class AlanfzfMultiTenantBundle extends AbstractBundle
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('url')
-                        ->defaultValue('%env(DATABASE_URL)%')
+                        ->defaultValue('%env(resolve:DATABASE_URL)%')
                     ->end()
                 ->end()
             ->end()
@@ -38,32 +39,6 @@ class AlanfzfMultiTenantBundle extends AbstractBundle
                    ->end()
                ->end()
            ->end()
-            // tenant entity manager configuration
-           ->arrayNode('tenant_entity_manager')
-               ->addDefaultsIfNotSet()
-               ->children()
-                   ->scalarNode('tenant_naming_strategy')
-                       ->defaultValue('doctrine.orm.naming_strategy.underscore_number_aware')
-                   ->end()
-                   ->arrayNode('mapping')
-                       ->addDefaultsIfNotSet()
-                       ->children()
-                           ->scalarNode('dir')
-                               ->defaultValue('%kernel.project_dir%/src/Entity/Tenant')
-                           ->end()
-                           ->scalarNode('prefix')
-                               ->defaultValue('App\\Entity\\Tenant')
-                           ->end()
-                           ->scalarNode('alias')
-                               ->defaultValue('Tenant')
-                           ->end()
-                           ->booleanNode('is_bundle')
-                               ->defaultFalse()
-                           ->end()
-                       ->end()
-                   ->end()
-               ->end()
-           ->end()
         ->end();
     }
 
@@ -72,37 +47,6 @@ class AlanfzfMultiTenantBundle extends AbstractBundle
         ContainerConfigurator $container,
         ContainerBuilder $builder,
     ): void {
-
-        // Load the Doctrine configuration for the tenant connection and entity manager
-        $builder->prependExtensionConfig('doctrine', [
-            'dbal' => [
-                'connections' => [
-                    'tenant' => [
-                        'url' => $config['tenant_connection']['url'],
-                        'wrapper_class' => TenantConnection::class,
-                    ],
-                ],
-            ],
-
-            'orm' => [
-                'entity_managers' => [
-                    'tenant' => [
-                        'connection' => 'tenant',
-                        'naming_strategy' => $config['tenant_entity_manager']['tenant_naming_strategy'],
-                        'mappings' => [
-                            'AlanfzfMultiTenantBundle' => [
-                                'type' => 'attribute',
-                                'dir' => $config['tenant_entity_manager']['mapping']['dir'],
-                                'prefix' => $config['tenant_entity_manager']['mapping']['prefix'],
-                                'alias' => $config['tenant_entity_manager']['mapping']['alias'],
-                                'is_bundle' => $config['tenant_entity_manager']['mapping']['is_bundle'],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ]);
-
         // migrations
         $container->parameters()
             ->set('tenant_doctrine_migration', [
@@ -110,17 +54,61 @@ class AlanfzfMultiTenantBundle extends AbstractBundle
                 'path' => $config['tenant_migration']['tenant_migration_path'],
             ]);
 
-        // entity manager
         $container->services()
-        ->set('tenant_entity_manager', TenantEntityManager::class)
-        ->args([
-            service('doctrine.orm.tenant_entity_manager'),
-        ])
-        ->public();
+            ->set('tenant_entity_manager', TenantEntityManager::class)
+            ->public()
+            ->args([service('doctrine.orm.tenant_entity_manager')]);
 
-        $container->alias(
-            TenantEntityManager::class,
-            'tenant_entity_manager',
+        $container->services()
+            ->alias(TenantEntityManager::class, 'tenant_entity_manager');
+    }
+
+
+    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+    {
+        // TODO: check if this can be configurable in any way instead
+        // of hardcoding
+        $this->createMissingDir(
+            $builder->getParameter('kernel.project_dir'),
+            '%kernel.project_dir%/src/Entity/Tenant',
         );
+
+        $builder->prependExtensionConfig('doctrine', [
+            'dbal' => [
+                'connections' => [
+                    'tenant' => [
+                        'url' => '%env(resolve:DATABASE_URL)%',
+                        'wrapper_class' => TenantConnection::class,
+                    ],
+                ],
+            ],
+            'orm' => [
+                'entity_managers' => [
+                    'tenant' => [
+                        'connection' => 'tenant',
+                        'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
+                        'mappings' => [
+                            'AlanfzfMultiTenantBundle' => [
+                                'type' => 'attribute',
+                                'dir' => '%kernel.project_dir%/src/Entity/Tenant',
+                                'prefix' => 'App\Entity\Tenant',
+                                'alias' => 'Tenant',
+                                'is_bundle' => false,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    private function createMissingDir(string $projectDir, string $dir): void
+    {
+        $fileSystem = new Filesystem();
+        $dir = str_replace('%kernel.project_dir%', '', $dir);
+        $dir = sprintf("%s/%s", $projectDir, $dir);
+        if (!$fileSystem->exists($dir)) {
+            $fileSystem->mkdir($dir);
+        }
     }
 }
